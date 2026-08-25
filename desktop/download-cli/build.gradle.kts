@@ -19,5 +19,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.abdownloadmanager.desktop.downloadcli.DownloadCliMainKt")
+    mainClass = "com.abdownloadmanager.desktop.downloadcli.DownloadCliMainKt"
 }
