@@ -1,0 +1,48 @@
+name: build download-cli
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Compile download-cli
+        run: ./gradlew :desktop:download-cli:compileKotlin --no-daemon
+
+      - name: Build download-cli jar
+        run: ./gradlew :desktop:download-cli:build -x test --no-daemon
+
+      - name: Upload jar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: download-cli-jar
+          path: desktop/download-cli/build/libs/*.jar
+          if-no-files-found: warn
+          retention-days: 7
