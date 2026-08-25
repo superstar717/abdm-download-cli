@@ -1,6 +1,7 @@
 plugins {
     id(MyPlugins.kotlin)
     id(Plugins.Kotlin.serialization)
+    application
 }
 
 dependencies {
